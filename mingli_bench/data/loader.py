@@ -33,7 +33,7 @@ class DataLoader:
             found_path = find_data_file("data.json")
             if not found_path:
                 # Try alternative names
-                found_path = find_data_file("fortune_telling_bench_standard.json")
+                found_path = find_data_file("mingli_bench_standard.json")
             
             if found_path:
                 self.data_path = found_path

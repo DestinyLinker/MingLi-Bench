@@ -79,8 +79,8 @@ TEMPERATURE=0.0
 **Sanity check** once keys are in place:
 
 ```bash
-python -m fortune_telling_bench.cli --list-models   # supported model names
-python -m fortune_telling_bench.cli --stats         # dataset statistics
+python -m mingli_bench.cli --list-models   # supported model names
+python -m mingli_bench.cli --stats         # dataset statistics
 ```
 
 ---
@@ -96,10 +96,10 @@ There are two common routing modes.
 Leave `--platform` unset and write the model name in OpenRouter's `provider/model` form. The CLI auto-detects the `/` and routes through OpenRouter.
 
 ```bash
-python -m fortune_telling_bench.cli --model openai/gpt-4o               --year 2025 --cot --astro --max-workers 8
-python -m fortune_telling_bench.cli --model anthropic/claude-sonnet-4-6 --year 2025 --cot --astro
-python -m fortune_telling_bench.cli --model google/gemini-2.5-pro       --year 2025 --cot --astro
-python -m fortune_telling_bench.cli --model deepseek/deepseek-r1        --year 2025 --cot --astro
+python -m mingli_bench.cli --model openai/gpt-4o               --year 2025 --cot --astro --max-workers 8
+python -m mingli_bench.cli --model anthropic/claude-sonnet-4-6 --year 2025 --cot --astro
+python -m mingli_bench.cli --model google/gemini-2.5-pro       --year 2025 --cot --astro
+python -m mingli_bench.cli --model deepseek/deepseek-r1        --year 2025 --cot --astro
 ```
 
 ### 2. Native provider
@@ -108,12 +108,12 @@ When the model name doesn't match auto-detection rules (e.g. a versioned Doubao 
 
 ```bash
 # Native Doubao / Volcengine
-python -m fortune_telling_bench.cli \
+python -m mingli_bench.cli \
     --platform doubao --model doubao-seed-2-0-pro-260215 \
     --year 2025 --cot --astro --max-workers 8
 
 # Any model name, routed through an OpenAI-compatible gateway (set via OPENAI_BASE_URL)
-python -m fortune_telling_bench.cli \
+python -m mingli_bench.cli \
     --platform openai --model doubao-seed-2-0-pro-260215 \
     --year 2025 --cot --astro --max-workers 8
 ```
@@ -141,7 +141,7 @@ python -m fortune_telling_bench.cli \
 | `--list-models` | — | Print supported model names and exit. |
 | `--stats` | — | Print dataset statistics (optionally filtered by `--year`) and exit. |
 
-Full help: `python -m fortune_telling_bench.cli --help`.
+Full help: `python -m mingli_bench.cli --help`.
 
 ---
 

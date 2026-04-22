@@ -52,7 +52,7 @@ def find_data_file(filename: str,
         data_dirs = [
             "data",
             "../data",
-            "fortune_telling_bench/data",
+            "mingli_bench/data",
             Path(__file__).parent.parent / "data",
         ]
     

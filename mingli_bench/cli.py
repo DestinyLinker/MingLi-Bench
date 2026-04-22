@@ -21,19 +21,19 @@ def main():
         epilog="""
 Examples:
   # Evaluate GPT-4
-  python -m fortune_telling_bench.cli --model gpt-4
+  python -m mingli_bench.cli --model gpt-4
 
   # Evaluate only 2023 benchmark questions
-  python -m fortune_telling_bench.cli --model gpt-4 --year 2023
+  python -m mingli_bench.cli --model gpt-4 --year 2023
   
   # Use Chain-of-Thought reasoning
-  python -m fortune_telling_bench.cli --model gpt-4 --cot
+  python -m mingli_bench.cli --model gpt-4 --cot
   
   # Test with 10 sample questions
-  python -m fortune_telling_bench.cli --model claude-3-sonnet --sample 10
+  python -m mingli_bench.cli --model claude-3-sonnet --sample 10
   
   # Filter by category
-  python -m fortune_telling_bench.cli --model gemini-pro --categories 事件 婚姻
+  python -m mingli_bench.cli --model gemini-pro --categories 事件 婚姻
         """
     )
     

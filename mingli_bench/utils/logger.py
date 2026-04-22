@@ -17,7 +17,7 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
     Returns:
         Configured logger instance
     """
-    logger = logging.getLogger(name or "fortune_telling_bench")
+    logger = logging.getLogger(name or "mingli_bench")
     
     # Only configure if no handlers exist
     if not logger.handlers:

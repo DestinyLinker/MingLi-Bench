@@ -2,45 +2,74 @@
 Model factory for creating LLM clients.
 """
 
-from typing import Dict, Any, Type, Optional
-import re
+import importlib
+from typing import Dict, Any, Tuple, Type, Union, Optional
 
 from .base import ModelClient
-from .openai_client import OpenAIClient
-from .anthropic_client import AnthropicClient
-from .google_client import GoogleClient
-from .deepseek_client import DeepSeekClient
-from .doubao_client import DoubaoClient
 from ..utils.logger import get_logger
 from ..utils.config import load_config
 
 logger = get_logger(__name__)
 
 
+# Hint shown when an optional SDK is missing, keyed by provider.
+_PROVIDER_INSTALL_HINT = {
+    'openai': 'pip install openai',
+    'openrouter': 'pip install openai',
+    'deepseek': 'pip install openai',
+    'anthropic': 'pip install anthropic',
+    'google': 'pip install google-generativeai',
+    'doubao': 'pip install requests',
+}
+
+
 class ModelFactory:
     """Factory for creating model clients."""
 
-    # Provider to client class mapping
-    _registry = {
-        'openai': OpenAIClient,
-        'anthropic': AnthropicClient,
-        'google': GoogleClient,
-        'deepseek': DeepSeekClient,
-        'doubao': DoubaoClient,
-        'openrouter': OpenAIClient,  # OpenRouter uses OpenAI-compatible API
+    # Provider -> (relative module path, class name). Imported lazily on first use
+    # so users only need the SDKs for providers they actually call.
+    _registry: Dict[str, Union[Tuple[str, str], Type[ModelClient]]] = {
+        'openai':     ('.openai_client',    'OpenAIClient'),
+        'anthropic':  ('.anthropic_client', 'AnthropicClient'),
+        'google':     ('.google_client',    'GoogleClient'),
+        'deepseek':   ('.deepseek_client',  'DeepSeekClient'),
+        'doubao':     ('.doubao_client',    'DoubaoClient'),
+        'openrouter': ('.openai_client',    'OpenAIClient'),  # OpenAI-compatible API
     }
-    
+
     @classmethod
-    def register_provider(cls, provider: str, client_class: Type[ModelClient]):
+    def register_provider(
+        cls,
+        provider: str,
+        client: Union[Type[ModelClient], Tuple[str, str]],
+    ):
         """
         Register a new provider.
 
         Args:
             provider: Provider name
-            client_class: Client class
+            client: Either a ModelClient subclass (imported eagerly by caller) or
+                a (module_path, class_name) tuple for lazy loading.
         """
-        cls._registry[provider] = client_class
-    
+        cls._registry[provider] = client
+
+    @classmethod
+    def _load_client_class(cls, provider: str) -> Type[ModelClient]:
+        """Resolve a provider name to its ModelClient subclass, importing on demand."""
+        entry = cls._registry[provider]
+        if isinstance(entry, tuple):
+            module_path, class_name = entry
+            try:
+                module = importlib.import_module(module_path, package=__package__)
+            except ImportError as e:
+                hint = _PROVIDER_INSTALL_HINT.get(provider, f"pip install {provider}")
+                raise ImportError(
+                    f"Provider '{provider}' requires an extra dependency that is not "
+                    f"installed. Try: `{hint}`. Original error: {e}"
+                ) from e
+            return getattr(module, class_name)
+        return entry
+
     @classmethod
     def get_provider(cls, model_name: str) -> Optional[str]:
         """
@@ -78,7 +107,7 @@ class ModelFactory:
             return 'doubao'
 
         return None
-    
+
     @classmethod
     def create(cls,
                model_name: str,
@@ -123,12 +152,11 @@ class ModelFactory:
         # Get provider configuration
         provider_config = config.get(provider, {})
 
-        # Get client class
+        # Resolve client class (lazy import)
         if provider not in cls._registry:
             logger.warning(f"Unknown provider: {provider}, defaulting to OpenAI client")
-            client_class = cls._registry['openai']
-        else:
-            client_class = cls._registry[provider]
+            provider = 'openai'
+        client_class = cls._load_client_class(provider)
 
         # Build merged configuration
         merged_config = {
@@ -149,12 +177,12 @@ class ModelFactory:
 
         # Create and return client
         return client_class(**merged_config)
-    
+
     @classmethod
     def list_providers(cls) -> list:
         """Get list of available providers."""
         return list(cls._registry.keys())
-    
+
     @classmethod
     def list_supported_models(cls) -> Dict[str, list]:
         """Get supported models by provider."""
