@@ -9,6 +9,8 @@
 [![Questions](https://img.shields.io/badge/Questions-160-green.svg)](./data/data.json)
 [![Years](https://img.shields.io/badge/Years-2022--2025-orange.svg)](./data)
 
+English | [中文](./README_zh.md)
+
 </div>
 
 ---
