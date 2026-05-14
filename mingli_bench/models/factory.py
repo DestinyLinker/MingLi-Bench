@@ -19,6 +19,8 @@ _PROVIDER_INSTALL_HINT = {
     'deepseek': 'pip install openai',
     'anthropic': 'pip install anthropic',
     'google': 'pip install google-generativeai',
+    'astraflow':    'pip install openai',
+    'astraflow_cn': 'pip install openai',
     'doubao': 'pip install requests',
 }
 
@@ -35,6 +37,8 @@ class ModelFactory:
         'deepseek':   ('.deepseek_client',  'DeepSeekClient'),
         'doubao':     ('.doubao_client',    'DoubaoClient'),
         'openrouter': ('.openai_client',    'OpenAIClient'),  # OpenAI-compatible API
+        'astraflow':    ('.astraflow_client', 'AstraflowClient'),    # OpenAI-compatible API (global)
+        'astraflow_cn': ('.astraflow_client', 'AstraflowCNClient'),  # OpenAI-compatible API (China)
     }
 
     @classmethod
@@ -105,6 +109,8 @@ class ModelFactory:
             return 'deepseek'
         if model_name.startswith('doubao-'):
             return 'doubao'
+        if model_name.startswith('astraflow-'):
+            return 'astraflow'
 
         return None
 
@@ -144,7 +150,8 @@ class ModelFactory:
             raise ValueError(
                 f"Cannot determine provider for model '{model_name}'. "
                 f"Supported patterns: gpt-*, o1-*, o3-*, o4-*, claude-*, gemini-*, deepseek-*, doubao-*, "
-                f"or use OpenRouter format: provider/model-name (e.g., openai/gpt-4, nvidia/llama-3)"
+                f"or use OpenRouter format: provider/model-name (e.g., openai/gpt-4, nvidia/llama-3), "
+                f"or astraflow-* for Astraflow models"
             )
 
         logger.info(f"Determined provider: {provider} for model: {model_name}")
@@ -192,6 +199,14 @@ class ModelFactory:
             'google': ['gemini-pro', 'gemini-1.5-pro', 'gemini-1.5-flash'],
             'deepseek': ['deepseek-chat', 'deepseek-coder'],
             'doubao': ['doubao-pro', 'doubao-lite'],
+            'astraflow': [
+                'astraflow-deepseek-ai/DeepSeek-R1', 'astraflow-deepseek-ai/DeepSeek-V3',
+                'astraflow-meta-llama/Llama-4-Maverick',
+            ],
+            'astraflow_cn': [
+                'astraflow-deepseek-ai/DeepSeek-R1', 'astraflow-deepseek-ai/DeepSeek-V3',
+                'astraflow-meta-llama/Llama-4-Maverick',
+            ],
             'openrouter': [
                 'openai/gpt-4', 'anthropic/claude-3-sonnet', 'google/gemini-2.0-flash',
                 'x-ai/grok-4', 'moonshotai/kimi-k2', 'deepseek/deepseek-r1'
