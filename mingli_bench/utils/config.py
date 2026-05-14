@@ -85,6 +85,24 @@ def load_config(env_file: Optional[str] = None) -> Dict[str, Any]:
             "max_tokens": default_max_tokens,
         },
 
+        # Astraflow configuration (OpenAI-compatible, global endpoint)
+        # Sign up at https://astraflow.ucloud-global.com
+        "astraflow": {
+            "api_key": os.getenv("ASTRAFLOW_API_KEY"),
+            "base_url": os.getenv("ASTRAFLOW_BASE_URL", "https://api-us-ca.umodelverse.ai/v1"),
+            "temperature": default_temperature,
+            "max_tokens": default_max_tokens,
+        },
+
+        # Astraflow configuration (OpenAI-compatible, China endpoint)
+        # Sign up at https://astraflow.ucloud.cn
+        "astraflow_cn": {
+            "api_key": os.getenv("ASTRAFLOW_CN_API_KEY"),
+            "base_url": os.getenv("ASTRAFLOW_CN_BASE_URL", "https://api.modelverse.cn/v1"),
+            "temperature": default_temperature,
+            "max_tokens": default_max_tokens,
+        },
+
         # Doubao configuration
         "doubao": {
             "api_key": os.getenv("DOUBAO_API_KEY"),
