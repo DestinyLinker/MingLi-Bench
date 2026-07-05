@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 _PROVIDER_INSTALL_HINT = {
     'openai': 'pip install openai',
     'openrouter': 'pip install openai',
+    'requesty': 'pip install openai',
     'deepseek': 'pip install openai',
     'anthropic': 'pip install anthropic',
     'google': 'pip install google-generativeai',
@@ -35,6 +36,7 @@ class ModelFactory:
         'deepseek':   ('.deepseek_client',  'DeepSeekClient'),
         'doubao':     ('.doubao_client',    'DoubaoClient'),
         'openrouter': ('.openai_client',    'OpenAIClient'),  # OpenAI-compatible API
+        'requesty':   ('.openai_client',    'OpenAIClient'),  # OpenAI-compatible API
     }
 
     @classmethod

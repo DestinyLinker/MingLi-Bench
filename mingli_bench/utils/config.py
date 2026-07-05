@@ -53,6 +53,14 @@ def load_config(env_file: Optional[str] = None) -> Dict[str, Any]:
             "max_tokens": default_max_tokens,
         },
 
+        # Requesty configuration (OpenAI-compatible router)
+        "requesty": {
+            "api_key": os.getenv("REQUESTY_API_KEY"),
+            "base_url": os.getenv("REQUESTY_BASE_URL", "https://router.requesty.ai/v1"),
+            "temperature": default_temperature,
+            "max_tokens": default_max_tokens,
+        },
+
         # Native OpenAI configuration
         "openai": {
             "api_key": os.getenv("OPENAI_API_KEY"),
