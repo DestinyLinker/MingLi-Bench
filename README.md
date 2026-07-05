@@ -54,6 +54,10 @@ cp .env.example .env
 OPENROUTER_API_KEY=sk-or-...
 OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 
+# Requesty — OpenAI-compatible router (one key, most models)
+REQUESTY_API_KEY=rqsty-sk-...
+REQUESTY_BASE_URL=https://router.requesty.ai/v1
+
 # Native providers (only if you call them directly)
 OPENAI_API_KEY=sk-...
 # OPENAI_BASE_URL=https://api.openai.com/v1   # override for OpenAI-compatible gateways
@@ -120,7 +124,7 @@ python -m mingli_bench.cli \
     --year 2025 --cot --astro --max-workers 8
 ```
 
-`--platform` accepts: `openai`, `openrouter`, `anthropic`, `google`, `deepseek`, `doubao`.
+`--platform` accepts: `openai`, `openrouter`, `requesty`, `anthropic`, `google`, `deepseek`, `doubao`.
 
 ---
 
