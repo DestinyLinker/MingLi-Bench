@@ -117,7 +117,7 @@ Examples:
 
     parser.add_argument(
         "--platform",
-        choices=["openai", "openrouter", "anthropic", "google", "deepseek", "doubao"],
+        choices=["openai", "openrouter", "atlascloud", "anthropic", "google", "deepseek", "doubao"],
         help="Force routing platform (overrides auto-detection from model name prefix)",
     )
     
@@ -151,14 +151,14 @@ Examples:
         except Exception as e:
             logger.error(f"Failed to load dataset statistics: {e}")
             return 1
-        print(f"\nDataset Statistics:")
+        print("\nDataset Statistics:")
         print(f"  Name: {stats['benchmark_name']}")
         print(f"  Version: {stats['data_version']}")
         print(f"  Available Years: {', '.join(map(str, stats['available_years']))}")
         if args.year is not None:
             print(f"  Selected Year: {args.year}")
         print(f"  Total Questions: {stats['total_questions']}")
-        print(f"\n  Categories:")
+        print("\n  Categories:")
         for cat, count in stats['categories'].items():
             print(f"    - {cat}: {count}")
         return 0
@@ -216,7 +216,7 @@ Examples:
         if results['errors'] > 0:
             print(f"Errors: {results['errors']}")
         
-        print(f"\nCategory Breakdown:")
+        print("\nCategory Breakdown:")
         for cat, stats in results['category_stats'].items():
             print(f"  {cat:12s}: {stats['accuracy']:6.2%} ({stats['correct']}/{stats['total']})")
         

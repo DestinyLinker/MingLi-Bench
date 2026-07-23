@@ -61,6 +61,20 @@ def load_config(env_file: Optional[str] = None) -> Dict[str, Any]:
             "max_tokens": default_max_tokens,
         },
 
+        # Atlas Cloud OpenAI-compatible configuration
+        "atlascloud": {
+            "api_key": os.getenv("ATLASCLOUD_API_KEY") or os.getenv("ATLAS_CLOUD_API_KEY"),
+            "base_url": (
+                os.getenv("ATLASCLOUD_API_BASE")
+                or os.getenv("ATLASCLOUD_BASE_URL")
+                or os.getenv("ATLAS_CLOUD_API_BASE")
+                or os.getenv("ATLAS_CLOUD_BASE_URL")
+                or "https://api.atlascloud.ai/v1"
+            ),
+            "temperature": default_temperature,
+            "max_tokens": default_max_tokens,
+        },
+
         # Native Anthropic configuration
         "anthropic": {
             "api_key": os.getenv("CLAUDE_API_KEY") or os.getenv("ANTHROPIC_API_KEY"),
