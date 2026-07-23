@@ -16,6 +16,7 @@ logger = get_logger(__name__)
 _PROVIDER_INSTALL_HINT = {
     'openai': 'pip install openai',
     'openrouter': 'pip install openai',
+    'atlascloud': 'pip install openai',
     'deepseek': 'pip install openai',
     'anthropic': 'pip install anthropic',
     'google': 'pip install google-generativeai',
@@ -35,6 +36,7 @@ class ModelFactory:
         'deepseek':   ('.deepseek_client',  'DeepSeekClient'),
         'doubao':     ('.doubao_client',    'DoubaoClient'),
         'openrouter': ('.openai_client',    'OpenAIClient'),  # OpenAI-compatible API
+        'atlascloud': ('.atlascloud_client', 'AtlasCloudClient'),  # OpenAI-compatible API
     }
 
     @classmethod
@@ -85,9 +87,11 @@ class ModelFactory:
         Returns:
             Provider name or None
         """
-        # OpenRouter models (with prefix)
+        # OpenRouter / provider alias models (with prefix)
         if '/' in model_name:
             prefix = model_name.split('/')[0].lower()
+            if prefix in {'atlascloud', 'atlas-cloud', 'atlas'}:
+                return 'atlascloud'
             # Special case: bytedance prefix for Doubao native API
             if prefix == 'bytedance':
                 return 'doubao'
@@ -144,10 +148,14 @@ class ModelFactory:
             raise ValueError(
                 f"Cannot determine provider for model '{model_name}'. "
                 f"Supported patterns: gpt-*, o1-*, o3-*, o4-*, claude-*, gemini-*, deepseek-*, doubao-*, "
-                f"or use OpenRouter format: provider/model-name (e.g., openai/gpt-4, nvidia/llama-3)"
+                f"atlascloud/<model>, or use OpenRouter format: provider/model-name "
+                f"(e.g., openai/gpt-4, nvidia/llama-3)"
             )
 
         logger.info(f"Determined provider: {provider} for model: {model_name}")
+
+        if provider == 'atlascloud':
+            model_name = cls._normalize_atlascloud_model_name(model_name)
 
         # Get provider configuration
         provider_config = config.get(provider, {})
@@ -183,6 +191,14 @@ class ModelFactory:
         """Get list of available providers."""
         return list(cls._registry.keys())
 
+    @staticmethod
+    def _normalize_atlascloud_model_name(model_name: str) -> str:
+        """Strip routing aliases while preserving Atlas Cloud's canonical model id."""
+        for prefix in ('atlascloud/', 'atlas-cloud/', 'atlas/'):
+            if model_name.lower().startswith(prefix):
+                return model_name[len(prefix):]
+        return model_name
+
     @classmethod
     def list_supported_models(cls) -> Dict[str, list]:
         """Get supported models by provider."""
@@ -192,6 +208,7 @@ class ModelFactory:
             'google': ['gemini-pro', 'gemini-1.5-pro', 'gemini-1.5-flash'],
             'deepseek': ['deepseek-chat', 'deepseek-coder'],
             'doubao': ['doubao-pro', 'doubao-lite'],
+            'atlascloud': ['atlascloud/qwen/qwen3.5-flash', 'atlascloud/deepseek-ai/deepseek-v4-pro'],
             'openrouter': [
                 'openai/gpt-4', 'anthropic/claude-3-sonnet', 'google/gemini-2.0-flash',
                 'x-ai/grok-4', 'moonshotai/kimi-k2', 'deepseek/deepseek-r1'
